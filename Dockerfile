@@ -6,12 +6,9 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npm run build
+RUN NODE_OPTIONS=--max-old-space-size=2048 npm run build
 
-# Fix admin build path - Medusa looks in .medusa/admin but builds to .medusa/server/public/admin
-RUN if [ -d ".medusa/server/public/admin" ] && [ ! -d ".medusa/admin" ]; then \
-      cp -r .medusa/server/public/admin .medusa/admin; \
-    fi
+RUN rm -rf .medusa/admin && cp -r .medusa/server/public/admin .medusa/admin
 
 EXPOSE 9000
 
